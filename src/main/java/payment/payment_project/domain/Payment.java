@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import payment.payment_project.enums.PaymentType;
 
 @Entity
@@ -58,7 +59,7 @@ public class Payment {
     private String stringData;
 
     /** 결제 시간 */
-    @Column(nullable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
 
 

@@ -34,7 +34,7 @@ class PaymentServiceTest {
     }
 
     @Test
-    @DisplayName("정상 결제 테스트")
+    @DisplayName("결제 테스트")
     void testCreatePayment() {
         //given
         PaymentDto paymentDto = PaymentDto.builder()
@@ -57,7 +57,7 @@ class PaymentServiceTest {
         assertNotNull(response.getTransactionId());
         assertNotNull(response.getStringData());
 
-        long expectedVat = paymentDto.getTransactionAmount() / 11;
+        Long expectedVat = paymentDto.getTransactionAmount() / 11;
         ArgumentCaptor<Payment> paymentCaptor = ArgumentCaptor.forClass(Payment.class);
         verify(paymentRepository, times(1)).save(paymentCaptor.capture());
 
