@@ -1,5 +1,6 @@
 package payment.payment_project.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -36,12 +37,13 @@ public class PaymentController {
      * @return
      */
     @PostMapping("/card")
-    public ResponseEntity<Object> processCardPayment(@RequestBody CreateCardPaymentRequest createCardPaymentRequest) {
+    public ResponseEntity<Object> processCardPayment(@RequestBody @Valid CreateCardPaymentRequest createCardPaymentRequest) {
 
         PaymentDto paymentDto = PaymentDto.from(createCardPaymentRequest);
 
         CardPaymentResponse paymentResponse = paymentService.createPayment(paymentDto);
         HttpHeaders headers = createCommonHeader(paymentResponse.getTransactionId());
+
         return ResponseEntity.ok().header(String.valueOf(headers)).body(paymentResponse);
     }
 
@@ -55,6 +57,7 @@ public class PaymentController {
 
 
     private HttpHeaders createCommonHeader(String id) {
+        // FIXME
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("data_length", "446");

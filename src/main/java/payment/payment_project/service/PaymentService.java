@@ -1,36 +1,55 @@
 package payment.payment_project.service;
 
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import payment.payment_project.common.DataFormatter;
+import payment.payment_project.common.utils.PaymentDataUtil;
 import payment.payment_project.common.constants.PaymentConstants;
+import payment.payment_project.common.utils.valid.ValidationUtil;
 import payment.payment_project.controller.response.CardPaymentResponse;
 import payment.payment_project.domain.Payment;
+import payment.payment_project.enums.PaymentType;
+import payment.payment_project.repository.PaymentRepository;
 import payment.payment_project.service.dto.PaymentDto;
 
 @Service
+@AllArgsConstructor
 public class PaymentService {
 
+    private PaymentRepository paymentRepository;
+    private ModelMapper modelMapper;
+
+    /**
+     *  결제
+     */
     public CardPaymentResponse createPayment(PaymentDto paymentDto) {
 
-        // TODO validation
+        // paymentDto 유효성 검증
+        ValidationUtil.checkBusinessRules(paymentDto);
 
-        String transactionId = generateTransactionId();
+        // 관리 번호 생성
+        String transactionId = PaymentDataUtil.generateTransactionId();
 
-        String data = DataFormatter.createData(paymentDto);
+        // 데이터 생성
+        String data = PaymentDataUtil.createData(paymentDto);
 
-        String commonHeader = DataFormatter.createCommonHeader(data, PaymentConstants.PAYMENT, transactionId);
+        // 공통 헤더 생성
+        String commonHeader = PaymentDataUtil
+            .createCommonHeader(data, PaymentConstants.PAYMENT, transactionId);
 
-        String stringData = DataFormatter.generateStringData(commonHeader, data);
+        // 카드 사에 보낼 데이터 생성 (공통 헤더 + 기본 데이터)
+        String stringData = PaymentDataUtil.generateStringData(commonHeader, data);
 
+        Payment payment = PaymentDto.toEntity(paymentDto, transactionId, stringData);
 
-        return new CardPaymentResponse();
+        paymentRepository.save(payment);
+
+        return new CardPaymentResponse().builder()
+            .transactionId(transactionId)
+            .stringData(stringData)
+            .build();
     }
 
-    private String generateTransactionId() {
-        return UUID.randomUUID()
-            .toString()
-            .replace("-", "")
-            .substring(0, 20);
-    }
+
 }
