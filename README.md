@@ -59,6 +59,21 @@
 ---
 
 ## 프로젝트 폴더 구조
+```
+payment-project
+├── common           # 공통 유틸 및 상수 관리
+│   ├── constants
+│   ├── utils
+├── controller       # API 요청 처리
+│   ├── request
+│   ├── response
+├── domain           # JPA Entity
+├── enums            # Enum 
+├── repository       # JPA Repository
+├── service          # 비즈니스 로직
+│   ├── dto
+├── PaymentProjectApplication.java
+```
 
 ---
 ## 빌드 및 실행 방법
