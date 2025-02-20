@@ -1,15 +1,13 @@
 package payment.payment_project.service;
 
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import payment.payment_project.common.utils.PaymentDataUtil;
 import payment.payment_project.common.constants.PaymentConstants;
+import payment.payment_project.common.utils.PaymentDataUtil;
 import payment.payment_project.common.utils.valid.ValidationUtil;
 import payment.payment_project.controller.response.CardPaymentResponse;
 import payment.payment_project.domain.Payment;
-import payment.payment_project.enums.PaymentType;
 import payment.payment_project.repository.PaymentRepository;
 import payment.payment_project.service.dto.PaymentDto;
 

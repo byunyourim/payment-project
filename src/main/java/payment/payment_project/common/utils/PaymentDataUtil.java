@@ -3,7 +3,7 @@ package payment.payment_project.common.utils;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
-import payment.payment_project.common.constants.Constatns;
+import payment.payment_project.common.constants.PaymentConstants;
 import payment.payment_project.service.dto.PaymentDto;
 
 /**
@@ -25,7 +25,7 @@ public class PaymentDataUtil {
         int dataLength = getByteLength(data) + getByteLength(dataType) + getByteLength(transactionId);
 
         String stringHeader = new StringBuilder()
-            .append(formatNumber(Long.valueOf((long) dataLength), 4, Constatns.NUMBER_BASIC))
+            .append(formatNumber(Long.valueOf((long) dataLength), 4, PaymentConstants.NUMBER_BASIC))
             .append(formatString(dataType, 10))
             .append(formatString(transactionId, 20))
             .toString();
@@ -38,12 +38,12 @@ public class PaymentDataUtil {
      */
     public static String createData(PaymentDto paymentDto) {
         StringBuilder builder = new StringBuilder();
-        builder.append(stringToLongFormat(paymentDto.getCardNumber(), 20, Constatns.NUMBER_LEFT))
-            .append(stringToLongFormat(paymentDto.getInstallmentMonths(), 2, Constatns.NUMBER_ZERO))
-            .append(stringToLongFormat(paymentDto.getExpiryDate(), 4, Constatns.NUMBER_LEFT))
-            .append(stringToLongFormat(paymentDto.getCvc(), 3, Constatns.NUMBER_LEFT))
-            .append(formatNumber(paymentDto.getTransactionAmount(), 10, Constatns.NUMBER_BASIC))
-            .append(formatNumber(paymentDto.getVat(), 10, Constatns.NUMBER_ZERO))
+        builder.append(stringToLongFormat(paymentDto.getCardNumber(), 20, PaymentConstants.NUMBER_LEFT))
+            .append(stringToLongFormat(paymentDto.getInstallmentMonths(), 2, PaymentConstants.NUMBER_ZERO))
+            .append(stringToLongFormat(paymentDto.getExpiryDate(), 4, PaymentConstants.NUMBER_LEFT))
+            .append(stringToLongFormat(paymentDto.getCvc(), 3, PaymentConstants.NUMBER_LEFT))
+            .append(formatNumber(paymentDto.getTransactionAmount(), 10, PaymentConstants.NUMBER_BASIC))
+            .append(formatNumber(paymentDto.getVat(), 10, PaymentConstants.NUMBER_ZERO))
             .append(formatString(paymentDto.getTransactionId(), 20))
             .append(formatString(paymentDto.getEncryptCardInfo(), 300))
             .append(formatString(paymentDto.getEtc(), 47));
@@ -64,11 +64,11 @@ public class PaymentDataUtil {
      */
     public static String formatNumber(Long number, int length, String type) {
         switch (type) {
-            case Constatns.NUMBER_BASIC:
+            case PaymentConstants.NUMBER_BASIC:
                 return String.format("%" + length + "d", number);
-            case Constatns.NUMBER_ZERO:
+            case PaymentConstants.NUMBER_ZERO:
                 return String.format("%0" + length + "d", number);
-            case Constatns.NUMBER_LEFT:
+            case PaymentConstants.NUMBER_LEFT:
                 return String.format("%-" + length + "d", number);
             default:
                 throw new IllegalArgumentException("Invalid number format type: " + type);
