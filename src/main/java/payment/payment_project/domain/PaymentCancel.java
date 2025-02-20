@@ -1,6 +1,5 @@
 package payment.payment_project.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,59 +7,63 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import payment.payment_project.enums.PaymentType;
+import payment.payment_project.enums.CancelType;
 
 @Entity
-@Table(name = "payment")
+@Table(name = "payment_cancel")
 @Getter @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Payment {
+public class PaymentCancel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /** 취소 관리번호 (Unique ID, 20자리) */
     @Column(nullable = false, unique = true, length = 20)
-    private String transactionId;
+    private String cancelTransactionId;
 
-    /** 암호화된 카드 정보 */
-    @JsonIgnore
+    /** 취소 금액 */
     @Column(nullable = false)
-    private String encryptedCard;
+    private Long cancelAmount;
 
-    /** 할부 개월 수 (0: 일시불) */
-    @Column(nullable = false)
-    private String installmentMonths;
+    /** 취소 부가세 */
+    private Long cancelVat;
 
-    /** 결제 금액 */
-    @Column(nullable = false)
-    private long transactionAmount;
-
-    /** 결제구분 [결제/취소/부분취소] */
+    /** 결제 취소 타입 [전체취소/부분취소] */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PaymentType type;
+    private CancelType type;
 
-    /** 부가가치세 */
-    private Long vat;
-
-    /** 카드사로 보내는 데이터 */
+    /** 카드사에 보낸 취소 데이터 */
     @Lob
-    @Column(length = 450)
+    @Column(nullable = false)
     private String stringData;
 
-    /** 결제 시간 */
+    /** 응답 데이터 */
+    private String result;
+
+    /** 취소 금액 */
+    private String status;
+
+    /** 취소 시간 */
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime canceledAt;
+
+    /** 결제 관리번호 */
+    @OneToOne
+    @JoinColumn(name = "transaction_id", referencedColumnName = "transactionId")
+    private Payment payment;
 
 
-    // TODO: 추후 카드 결제 이외의 결제 수단 지원 예정
 }
