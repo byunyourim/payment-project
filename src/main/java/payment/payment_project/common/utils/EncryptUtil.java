@@ -23,13 +23,14 @@ import lombok.extern.slf4j.Slf4j;
 public class EncryptUtil {
 
     private static String secretKey = "PAYMENT_SECRET_KEY";
+    private static String alg = "AES";
 
-    public static SecretKeySpec getSecretKey(String data) throws Exception {
+    public static SecretKeySpec getSecretKey() throws Exception {
         MessageDigest sha = MessageDigest.getInstance("SHA-256");
         byte[] key = secretKey.getBytes(StandardCharsets.UTF_8);
         key = sha.digest(key);
         key = Arrays.copyOf(key, 32);
-        return new SecretKeySpec(key, "AES");
+        return new SecretKeySpec(key, alg);
     }
 
     /**
@@ -37,8 +38,8 @@ public class EncryptUtil {
      * @throws Exception
      */
     public static String encrypt(String data) throws Exception {
-        SecretKeySpec secretKeySpec = getSecretKey(data);
-        Cipher cipher = Cipher.getInstance("AES");
+        SecretKeySpec secretKeySpec = getSecretKey();
+        Cipher cipher = Cipher.getInstance(alg);
         cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
 
         byte[] encryptedBytes = cipher.doFinal(data.getBytes());
@@ -49,8 +50,8 @@ public class EncryptUtil {
      * 복호화
      */
     public static String decrypt(String encryptedData) throws Exception {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "AES");
-        Cipher cipher = Cipher.getInstance("AES");
+        SecretKeySpec secretKeySpec = getSecretKey();
+        Cipher cipher = Cipher.getInstance(alg);
         cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
 
         byte[] decodedBytes = Base64.getDecoder().decode(encryptedData);
