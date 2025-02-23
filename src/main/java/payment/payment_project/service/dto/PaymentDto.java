@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import payment.payment_project.common.utils.PaymentDataUtil;
+import payment.payment_project.common.utils.DataFormatUtil;
 import payment.payment_project.common.utils.valid.BusinessValidatable;
 import payment.payment_project.controller.request.CreateCardPaymentRequest;
 import payment.payment_project.domain.Payment;
@@ -60,11 +60,11 @@ public class PaymentDto implements BusinessValidatable {
     public static Payment toEntity(PaymentDto dto, String transactionId, String stringData) {
         return Payment.builder()
             .transactionId(transactionId)
-            .encryptedCard(PaymentDataUtil
+            .encryptedCard(DataFormatUtil
                 .encryptCardInfo(dto.getCardNumber(), dto.getExpiryDate(), dto.getCvc()))
             .installmentMonths(dto.getInstallmentMonths())
             .transactionAmount(dto.getTransactionAmount())
-            .vat(PaymentDataUtil.setVat(dto.getVat(), dto.getTransactionAmount()))
+            .vat(DataFormatUtil.setVat(dto.getVat(), dto.getTransactionAmount()))
             .stringData(stringData)
             .type(dto.getType())
             .build();

@@ -23,6 +23,7 @@ class PaymentRepositoryTest {
 
     @BeforeEach
     void setUp() {
+        // given
         payment = Payment.builder()
             .transactionId("M2NhNjczZTAtZjRjOS00")
             .encryptedCard("VafrJ3eKTF8oPJwibkMFpjpFCluevC/oSLC15k8PGw0mCv7rqGoCSg==")
