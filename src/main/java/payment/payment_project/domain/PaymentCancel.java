@@ -65,6 +65,4 @@ public class PaymentCancel {
     @OneToOne
     @JoinColumn(name = "transaction_id", referencedColumnName = "transactionId")
     private Payment payment;
-
-
 }

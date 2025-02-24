@@ -2,10 +2,13 @@ package payment.payment_project.service;
 
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import payment.payment_project.common.constants.PaymentConstants;
 import payment.payment_project.common.utils.DataFormatUtil;
+import payment.payment_project.common.utils.EncryptUtil;
 import payment.payment_project.common.utils.valid.ValidationUtil;
+import payment.payment_project.controller.response.RetrievePaymentResponse;
 import payment.payment_project.controller.response.CardPaymentResponse;
 import payment.payment_project.domain.Payment;
 import payment.payment_project.repository.PaymentRepository;
@@ -21,7 +24,6 @@ public class PaymentService {
      *  결제
      */
     public CardPaymentResponse createPayment(PaymentDto paymentDto) {
-
         // paymentDto 유효성 검증
         ValidationUtil.checkBusinessRules(paymentDto);
 
@@ -94,4 +96,34 @@ public class PaymentService {
     private String generateStringData(String commonHeader, String data) {
         return commonHeader.concat(data);
     }
+
+    public RetrievePaymentResponse getPaymentByTransactionId(String id) {
+        return paymentRepository.findByTransactionId(id)
+            .map(payment -> {
+
+                String encryptedCardInfo = payment.getEncryptedCard();
+
+                String[] decryptedCardInfo = new String[3];
+
+                try {
+                    decryptedCardInfo = EncryptUtil.decrypt(encryptedCardInfo).split("|");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return RetrievePaymentResponse.builder()
+                    .cardNumber(decryptedCardInfo[0])
+                    .expiryDate(decryptedCardInfo[1])
+                    .cvc(decryptedCardInfo[2])
+                    .type(payment.getType())
+                    .transactionAmount(payment.getTransactionAmount())
+                    .vat(payment.getVat())
+                    .build();
+            })
+            .orElseThrow(() -> new RuntimeException("TransactionId not found"));
+
+    }
+
+
 }

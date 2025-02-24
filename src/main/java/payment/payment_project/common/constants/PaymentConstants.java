@@ -9,7 +9,6 @@ package payment.payment_project.common.constants;
  * @since   2025-02-20
  */
 public class PaymentConstants {
-
     /**
      * 정렬 관련 상수
      */
